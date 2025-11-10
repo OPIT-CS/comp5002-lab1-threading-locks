@@ -20,7 +20,7 @@
 - `lab1_unsafe_counter.py` starter for demonstrating a race condition
 - `lab1_safe_counter.py` starter for fixing the race with a lock
 - `lab1_performance.py` starter for comparing CPU-bound and I/O-bound threading
-- `analysis.txt` where you answer the analysis questions
+- `analysis.md` where you answer the analysis questions
 
 ## Tasks
 
@@ -28,7 +28,7 @@
 
 - Clone the repository created for you by GitHub Classroom.
 - Modify the `.py` files to complete the tasks.
-- Answer the analysis questions in `analysis.txt`.
+- Answer the analysis questions in `analysis.md`.
 - Commit frequently with meaningful messages.
 - Push your final changes before the deadline.
 
@@ -43,7 +43,7 @@
    - Start all threads.
    - Join all threads.
 3. Run several times: `python lab1_unsafe_counter.py`.
-4. Observe the output. Compare “Expected count” vs “Actual count”. Record one or two typical incorrect results in `analysis.txt`.
+4. Observe the output. Compare “Expected count” vs “Actual count”. Record one or two typical incorrect results in `analysis.md`.
 
 ---
 
@@ -67,11 +67,11 @@
    - Create, start, and join threads for the CPU-bound part (each calls `cpu_bound_task`).
    - Create, start, and join threads for the I/O-bound part (each calls `io_bound_task`).
 5. Run: `python lab1_performance.py`.
-6. Record times for all four cases (Sequential CPU, Threaded CPU, Sequential I/O, Threaded I/O) in `analysis.txt`.
+6. Record times for all four cases (Sequential CPU, Threaded CPU, Sequential I/O, Threaded I/O) in `analysis.md`.
 
 ---
 
-### Task 4 — Analysis (`analysis.txt`)
+### Task 4 — Analysis (`analysis.md`)
 
 Answer based on your observations:
 
@@ -86,8 +86,8 @@ Answer based on your observations:
 ## Submission
 
 1. Save all `.py` changes.
-2. Ensure `analysis.txt` is complete.
-3. Stage: `git add lab1_unsafe_counter.py lab1_safe_counter.py lab1_performance.py analysis.txt` (or `git add .`)
+2. Ensure `analysis.md` is complete.
+3. Stage: `git add lab1_unsafe_counter.py lab1_safe_counter.py lab1_performance.py analysis.md` (or `git add .`)
 4. Commit: `git commit -m "Complete Lab 1"`
 5. Push: `git push origin main` (or your default branch)
-6. Verify on GitHub that your files and `analysis.txt` are updated.
+6. Verify on GitHub that your files and `analysis.md` are updated.
