@@ -6,23 +6,28 @@ import time
 global_counter = 0
 NUM_THREADS = 10
 INCREMENTS_PER_THREAD = 100_000
+YIELD_EVERY = 1_000  # Use the same interleaving pressure as the unsafe example
 
 # --- TODO: Task 2 - Create a Lock object ---
 # counter_lock = threading.Lock()
 # --- End TODO ---
+
 
 def safe_increment():
     """
     Increments the global counter safely using a lock.
     """
     global global_counter
-    for _ in range(INCREMENTS_PER_THREAD):
+    for i in range(INCREMENTS_PER_THREAD):
         # --- TODO: Task 2 - Use the lock to protect the critical section ---
-        # with counter_lock:
+        # Add `with counter_lock:` and indent the complete read-modify-write
+        # sequence below so no other thread can enter it at the same time.
         current_value = global_counter
-        # time.sleep(0.000001)  # Optional small sleep
+        if i % YIELD_EVERY == 0:
+            time.sleep(0.000001)
         global_counter = current_value + 1
         # --- End TODO ---
+
 
 def run_threads():
     """
@@ -40,6 +45,7 @@ def run_threads():
     #     t.join()
     # --- End TODO ---
     print("All threads finished.")
+
 
 if __name__ == "__main__":
     print(f"Starting counter at: {global_counter}")

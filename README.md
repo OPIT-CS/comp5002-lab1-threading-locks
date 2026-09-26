@@ -14,6 +14,10 @@
   - The Global Interpreter Lock (GIL) and its implications.
   - Basic locks (`threading.Lock`, `with` statement).
 
+### Python environment note
+
+The expected CPU-bound result assumes a standard GIL-enabled CPython interpreter. CPython 3.13+ also supports optional free-threaded builds where the GIL can be disabled. `lab1_performance.py` reports the Python version and, where the interpreter exposes it, the current GIL state. If the GIL is disabled, record that in `analysis.md` and explain why your CPU-bound result may differ from the standard expectation.
+
 ## Files Provided
 
 - `README.md` this file
@@ -39,11 +43,13 @@
 1. Open `lab1_unsafe_counter.py`.
 2. Complete `run_threads`:
    - Create a list to hold `threading.Thread` objects.
-   - Loop `num_threads` times, creating threads targeting `unsafe_increment`; append each to the list.
+   - Loop `NUM_THREADS` times, creating threads targeting `unsafe_increment`; append each to the list.
    - Start all threads.
    - Join all threads.
 3. Run several times: `python lab1_unsafe_counter.py`.
 4. Observe the output. Compare “Expected count” vs “Actual count”. Record one or two typical incorrect results in `analysis.md`.
+
+The starter deliberately yields occasionally between the read and write inside `unsafe_increment`. This widens the race window so the unsafe interleaving is observable reliably across current CPython versions. Do not remove that yield while completing Task 1.
 
 ---
 
@@ -51,23 +57,28 @@
 
 1. Open `lab1_safe_counter.py`.
 2. Create a lock globally, for example `counter_lock = threading.Lock()`.
-3. In `safe_increment`, use `with counter_lock:` to protect the read-modify-write of `global_counter`.
+3. In `safe_increment`, use `with counter_lock:` to protect the complete read-modify-write sequence of `global_counter`.
 4. Complete `run_threads` as in Task 1, but target `safe_increment`.
 5. Run: `python lab1_safe_counter.py`.
 6. Record whether the actual count now matches the expected count every run.
+
+The safe starter uses the same periodic yield as the unsafe version so you are testing the lock under comparable interleaving pressure.
 
 ---
 
 ### Task 3 — Performance comparison (`lab1_performance.py`)
 
 1. Open `lab1_performance.py`.
-2. Implement `cpu_bound_task(n)`; a simple example is `sum(range(n))`.
+2. Implement `cpu_bound_task(n)`; a simple Python arithmetic loop is sufficient.
 3. Implement `io_bound_task(duration)` using `time.sleep(duration)`.
-4. Complete the threaded sections in `main`:
-   - Create, start, and join threads for the CPU-bound part (each calls `cpu_bound_task`).
-   - Create, start, and join threads for the I/O-bound part (each calls `io_bound_task`).
+4. Complete `run_threaded`:
+   - Create one thread per task, each targeting `target_func`.
+   - Start all threads.
+   - Join all threads.
 5. Run: `python lab1_performance.py`.
 6. Record times for all four cases (Sequential CPU, Threaded CPU, Sequential I/O, Threaded I/O) in `analysis.md`.
+
+The sequential and threaded measurements execute the same number of identical tasks. This makes the timing comparison fair: only the execution model changes.
 
 ---
 
@@ -75,11 +86,11 @@
 
 Answer based on your observations:
 
-1. **Race condition** Explain why `unsafe_counter.py` produced incorrect results, referencing atomicity and interleaving.
+1. **Race condition** Explain why `lab1_unsafe_counter.py` produced incorrect results, referencing atomicity and interleaving.
 2. **Lock correction** Explain how `threading.Lock` fixes the race and what principle it enforces.
-3. **CPU-bound performance** Compare sequential vs threaded CPU times. State whether threading helped and why, referencing the GIL.
-4. **I/O-bound performance** Compare sequential vs threaded I/O times. Explain any speedup and how the GIL interacts with I/O.
-5. **Conclusion** Summarise when Python `threading` helps performance in CPython and when it does not.
+3. **CPU-bound performance** Compare sequential vs threaded CPU times. State whether threading helped and why, referencing the GIL and the GIL state reported by your interpreter.
+4. **I/O-bound performance** Compare sequential vs threaded I/O times. Explain any speedup and how the GIL interacts with blocking I/O.
+5. **Conclusion** Summarise when Python `threading` helps performance in CPython and when it does not. If you used a free-threaded build, distinguish that result from standard GIL-enabled CPython.
 
 ---
 
