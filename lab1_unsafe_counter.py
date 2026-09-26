@@ -6,6 +6,8 @@ import time
 global_counter = 0
 NUM_THREADS = 10
 INCREMENTS_PER_THREAD = 100_000  # Each thread will attempt this many increments
+YIELD_EVERY = 1_000  # Make unsafe interleavings observable across CPython versions
+
 
 def unsafe_increment():
     """
@@ -13,11 +15,16 @@ def unsafe_increment():
     repeatedly, without synchronization to induce a race condition.
     """
     global global_counter
-    for _ in range(INCREMENTS_PER_THREAD):
+    for i in range(INCREMENTS_PER_THREAD):
         current_value = global_counter
-        # Optional tiny sleep increases the chance of thread interleaving
-        # time.sleep(0.000001)
+
+        # Deliberately yield occasionally between the read and write.
+        # This widens the race window so the unsafe behavior is reproducible.
+        if i % YIELD_EVERY == 0:
+            time.sleep(0.000001)
+
         global_counter = current_value + 1
+
 
 def run_threads():
     """
@@ -40,6 +47,7 @@ def run_threads():
     #     t.join()
     # --- End TODO ---
     print("All threads finished.")
+
 
 if __name__ == "__main__":
     print(f"Starting counter at: {global_counter}")
